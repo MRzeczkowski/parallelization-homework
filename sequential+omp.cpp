@@ -13,11 +13,10 @@ struct Solution
 
 int main()
 {
-    int power = 4, p = pow(10, power);
-    double e = 1 / (double)p;
+    double p = pow(10, 4), e = 1 / p;
 
-    int maxIterX1 = 2 * p;
-    int maxIterX2 = p;
+    int maxIterX1 = 2 * p,
+        maxIterX2 = p;
 
     Solution solution;
     solution.val = DBL_MAX;

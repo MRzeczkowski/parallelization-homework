@@ -30,8 +30,7 @@
 *.exe
 *.out
 *.app
-sequential.dSYM/Contents/Resources/DWARF/sequential
 .vscode/tasks.json
-sequential.dSYM/Contents/Info.plist
-sequential
 .vscode/settings.json
+sequential+omp
+sequential+omp.dSYM/Contents/Info.plist

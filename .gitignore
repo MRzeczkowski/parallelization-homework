@@ -34,3 +34,7 @@
 .vscode/settings.json
 sequential+omp
 sequential+omp.dSYM/Contents/Info.plist
+mpi
+multithreading
+.vscode/c_cpp_properties.json
+multithreading.dSYM/Contents/Info.plist

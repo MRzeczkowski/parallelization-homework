@@ -5,6 +5,12 @@
 #include <thread>
 #include <vector>
 
+double P = pow(10, 4),
+       E = 1 / P;
+
+int MaxIterX1 = 2 * P,
+    MaxIterX2 = P;
+
 struct Solution
 {
     double x1;
@@ -12,15 +18,15 @@ struct Solution
     double val;
 };
 
-void calculateSolution(double p, double e, int maxIterX2, int start, int end, Solution &localSolution)
+void calculateSolution(int start, int end, Solution &localSolution)
 {
     for (int i = start; i > end; i--)
     {
-        double x1 = 2.0 - i * e;
+        double x1 = 2.0 - i * E;
 
-        for (int j = 0; j < maxIterX2; j++)
+        for (int j = 0; j < MaxIterX2; j++)
         {
-            double x2 = 1.0 + j * e;
+            double x2 = 1.0 + j * E;
 
             double c = pow(x1 - 2.0, 2.0) / 4.0 + pow(x2 - 1.0, 2.0) / 9.0;
 
@@ -41,19 +47,14 @@ void calculateSolution(double p, double e, int maxIterX2, int start, int end, So
 
 int main()
 {
-    double p = pow(10, 4);
-    double e = 1 / p;
-    int maxIterX1 = 2 * p;
-    int maxIterX2 = p;
-
     Solution globalSolution;
     globalSolution.val = DBL_MAX;
 
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     int numThreads = std::thread::hardware_concurrency();
-    int iterationsPerThread = maxIterX1 / numThreads;
-    int extraIterations = maxIterX1 % numThreads;
+    int iterationsPerThread = MaxIterX1 / numThreads;
+    int extraIterations = MaxIterX1 % numThreads;
 
     std::vector<std::thread> threads(numThreads);
     std::vector<Solution> localSolutions(numThreads);
@@ -62,7 +63,7 @@ int main()
     {
         int start = start + iterationsPerThread + (i < extraIterations ? 1 : 0);
         int end = i * iterationsPerThread + std::min(i, extraIterations);
-        threads[i] = std::thread(calculateSolution, p, e, maxIterX2, start, end, std::ref(localSolutions[i]));
+        threads[i] = std::thread(calculateSolution, start, end, std::ref(localSolutions[i]));
     }
 
     for (auto &thread : threads)

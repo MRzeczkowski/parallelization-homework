@@ -4,6 +4,12 @@
 #include <chrono>
 #include <mpi.h>
 
+double P = pow(10, 4),
+       E = 1 / P;
+
+int MaxIterX1 = 2 * P,
+    MaxIterX2 = P;
+
 struct Solution
 {
     double x1;
@@ -11,16 +17,15 @@ struct Solution
     double val;
 };
 
-// Function to calculate the solution for a subset of iterations
-void calculateSolution(double p, double e, int maxIterX2, int start, int end, Solution &solution)
+void calculateSolution(int start, int end, Solution &solution)
 {
     for (int i = start; i > end; i--)
     {
-        double x1 = 2.0 - i * e;
+        double x1 = 2.0 - i * E;
 
-        for (int j = 0; j < maxIterX2; j++)
+        for (int j = 0; j < MaxIterX2; j++)
         {
-            double x2 = 1.0 + j * e;
+            double x2 = 1.0 + j * E;
 
             double c = pow(x1 - 2.0, 2.0) / 4.0 + pow(x2 - 1.0, 2.0) / 9.0;
 
@@ -61,11 +66,6 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    double p = pow(10, 4), e = 1 / p;
-
-    int maxIterX1 = 2 * p,
-        maxIterX2 = p;
-
     Solution localSolution;
     localSolution.val = DBL_MAX;
 
@@ -75,14 +75,12 @@ int main(int argc, char **argv)
         begin = std::chrono::steady_clock::now();
     }
 
-    // Split the work among processes
-    int iterationsPerProcess = maxIterX1 / numProcesses;
-    int extraIterations = maxIterX1 % numProcesses;
+    int iterationsPerProcess = MaxIterX1 / numProcesses;
+    int extraIterations = MaxIterX1 % numProcesses;
     int start = rank * iterationsPerProcess + iterationsPerProcess + (rank < extraIterations ? 1 : 0);
     int end = rank * iterationsPerProcess + std::min(rank, extraIterations);
 
-    // Calculate the solution for the assigned iterations
-    calculateSolution(p, e, maxIterX2, start, end, localSolution);
+    calculateSolution(start, end, localSolution);
 
     // Create custom MPI datatype for Solution struct
     MPI_Datatype solutionType;
@@ -106,7 +104,6 @@ int main(int argc, char **argv)
     MPI_Op minLocOp;
     MPI_Op_create(minLocReduce, 1, &minLocOp);
 
-    // Reduce local solutions to the root process (rank 0)
     Solution globalSolution;
     globalSolution.val = DBL_MAX;
 

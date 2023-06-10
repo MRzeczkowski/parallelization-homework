@@ -3,6 +3,12 @@
 #include <cmath>
 #include <chrono>
 
+double P = pow(10, 4),
+       E = 1 / P;
+
+int MaxIterX1 = 2 * P,
+    MaxIterX2 = P;
+
 struct Solution
 {
     double x1;
@@ -13,24 +19,19 @@ struct Solution
 
 int main()
 {
-    double p = pow(10, 4), e = 1 / p;
-
-    int maxIterX1 = 2 * p,
-        maxIterX2 = p;
-
     Solution solution;
     solution.val = DBL_MAX;
 
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 #pragma omp parallel for reduction(minimum : solution)
-    for (int i = maxIterX1; i > 0; i--)
+    for (int i = MaxIterX1; i > 0; i--)
     {
-        double x1 = 2.0 - i * e;
+        double x1 = 2.0 - i * E;
 
-        for (int j = 0; j < maxIterX2; j++)
+        for (int j = 0; j < MaxIterX2; j++)
         {
-            double x2 = 1.0 + j * e;
+            double x2 = 1.0 + j * E;
 
             double c = pow(x1 - 2.0, 2.0) / 4.0 + pow(x2 - 1.0, 2.0) / 9.0;
 

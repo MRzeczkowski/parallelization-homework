@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "Calculate";
+
+service Calculator {
+  rpc PerformCalculation (CalculationRequest) returns (CalculationReply);
+}
+
+message CalculationRequest {
+  double P = 1;
+  double E = 2;
+  int32 MaxIterX2 = 3;
+  int32 Start = 4;
+  int32 End = 5;
+}
+
+message CalculationReply {
+  double X1 = 1;
+  double X2 = 2;
+  double Val = 3;
+}

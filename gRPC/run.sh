@@ -4,10 +4,14 @@ ports=(5550 5551 5552 5553 5554 5555 5556 5557)
 
 cd ./Service
 
+dotnet build
+
 for port in "${ports[@]}"
 do
-    dotnet run port > /dev/null 2>&1 &
+    dotnet run --no-build port
 done
 
 cd ../Client
-dotnet run "${ports[@]}"
+
+dotnet build
+dotnet run --no-build "${ports[@]}"

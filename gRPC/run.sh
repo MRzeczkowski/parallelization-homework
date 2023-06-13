@@ -8,7 +8,7 @@ dotnet build
 
 for port in "${ports[@]}"
 do
-    dotnet run --no-build port
+    dotnet run --no-build $port &
 done
 
 cd ../Client
